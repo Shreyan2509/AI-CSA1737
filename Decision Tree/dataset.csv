@@ -1,0 +1,16 @@
+a1,a2,a3,Class
+True,Hot,High,No
+True,Hot,High,No
+False,Hot,High,Yes
+True,Cool,High,Yes
+True,Cool,Normal,Yes
+False,Hot,Normal,Yes
+False,Cool,High,No
+True,Cold,Normal,No
+False,Cold,Normal,No
+True,Cold,High,Yes
+False,Cool,Normal,Yes
+True,Hot,Normal,Yes
+False,Cold,High,No
+True,Cool,High,Yes
+False,Hot,Normal,No
