@@ -1,51 +1,40 @@
 import math
 
-# Minimax function with Alpha-Beta Pruning
-def alphabeta(depth, nodeIndex, maximizingPlayer, values, alpha, beta):
-    
-    # If leaf node → return value
-    if depth == 3:  
-        return values[nodeIndex]
+class AlphaBetaPruning:
+    def __init__(self, values):
+        self.values = values
+        self.max_depth = int(math.log2(len(values)))
 
-    if maximizingPlayer:
-        best = -math.inf
+    def alphabeta(self, depth, node_index, maximizing_player, alpha, beta):
+        # If leaf node, return its value
+        if depth == self.max_depth:
+            return self.values[node_index]
 
-        # Explore left child then right child
-        for i in range(2):
-            val = alphabeta(depth + 1, nodeIndex * 2 + i, False, values, alpha, beta)
-            best = max(best, val)
-            alpha = max(alpha, best)
-
-            # Beta Cutoff
-            if beta <= alpha:
-                break
-
-        return best
-
-    else:
-        best = math.inf
-
-        # Explore left child then right child
-        for i in range(2):
-            val = alphabeta(depth + 1, nodeIndex * 2 + i, True, values, alpha, beta)
-            best = min(best, val)
-            beta = min(beta, best)
-
-            # Alpha Cutoff
-            if beta <= alpha:
-                break
-
-        return best
+        if maximizing_player:
+            max_eval = -math.inf
+            for i in range(2):  # Left and right child
+                eval = self.alphabeta(depth + 1, node_index * 2 + i, False, alpha, beta)
+                max_eval = max(max_eval, eval)
+                alpha = max(alpha, max_eval)
+                if beta <= alpha:
+                    break  # Beta cutoff
+            return max_eval
+        else:
+            min_eval = math.inf
+            for i in range(2):  # Left and right child
+                eval = self.alphabeta(depth + 1, node_index * 2 + i, True, alpha, beta)
+                min_eval = min(min_eval, eval)
+                beta = min(beta, min_eval)
+                if beta <= alpha:
+                    break  # Alpha cutoff
+            return min_eval
 
 
-# Driver Code
 if __name__ == "__main__":
-
-    # Leaf node values (8 leaves → depth 3 binary tree)
     values = [3, 5, 6, 9, 1, 2, 0, -1]
-
     print("Leaf Nodes =", values)
 
-    result = alphabeta(0, 0, True, values, -math.inf, math.inf)
+    alpha_beta = AlphaBetaPruning(values)
+    optimal_value = alpha_beta.alphabeta(0, 0, True, -math.inf, math.inf)
 
-    print("Optimal Value =", result)
+    print("Optimal Value =", optimal_value)
