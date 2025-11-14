@@ -1,31 +1,44 @@
 import heapq
 
-def a_star(graph, heuristics, start, goal):
-    # Priority queue: (f = g + h, g, node, path)
-    queue = [(heuristics[start], 0, start, [start])]
-    visited = set()
+class AStarPathfinder:
+    def __init__(self, graph, heuristics):
+        self.graph = graph
+        self.heuristics = heuristics
 
-    while queue:
-        f, g, node, path = heapq.heappop(queue)
+    def find_path(self, start, goal):
+        open_set = []
+        heapq.heappush(open_set, (self.heuristics[start], start))
 
-        if node in visited:
-            continue
-        visited.add(node)
+        came_from = {}
+        g_score = {node: float('inf') for node in self.graph}
+        g_score[start] = 0
 
-        # Goal test
-        if node == goal:
-            return g, path
+        while open_set:
+            current_f, current = heapq.heappop(open_set)
 
-        # Explore neighbors
-        for neighbor, cost in graph.get(node, []):
-            if neighbor not in visited:
-                g_new = g + cost
-                f_new = g_new + heuristics.get(neighbor, 0)
-                heapq.heappush(queue, (f_new, g_new, neighbor, path + [neighbor]))
+            if current == goal:
+                return self._reconstruct_path(came_from, current), g_score[current]
 
-    return float('inf'), []  # If goal not reachable
+            for neighbor, cost in self.graph.get(current, []):
+                tentative_g = g_score[current] + cost
+                if tentative_g < g_score[neighbor]:
+                    came_from[neighbor] = current
+                    g_score[neighbor] = tentative_g
+                    f_score = tentative_g + self.heuristics.get(neighbor, float('inf'))
+                    heapq.heappush(open_set, (f_score, neighbor))
 
-# Example weighted graph
+        return [], float('inf')  # Goal not reachable
+
+    def _reconstruct_path(self, came_from, current):
+        path = [current]
+        while current in came_from:
+            current = came_from[current]
+            path.append(current)
+        path.reverse()
+        return path
+
+
+# Example graph and heuristics (same as before)
 graph = {
     'A': [('B', 1), ('C', 3)],
     'B': [('D', 3), ('E', 1)],
@@ -36,7 +49,6 @@ graph = {
     'G': []
 }
 
-# Heuristic values (estimated distance to goal)
 heuristics = {
     'A': 7,
     'B': 6,
@@ -49,8 +61,8 @@ heuristics = {
 
 start_node = 'A'
 goal_node = 'G'
-
-cost, path = a_star(graph, heuristics, start_node, goal_node)
+pathfinder = AStarPathfinder(graph, heuristics)
+path, cost = pathfinder.find_path(start_node, goal_node)
 
 print("A* Search Result:")
 print("Path:", " -> ".join(path))
