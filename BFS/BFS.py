@@ -1,20 +1,27 @@
 from collections import deque
 
-def bfs(graph, start):
-    visited = set()
-    queue = deque([start])
-    visited.add(start)
+class BFS:
+    def __init__(self, graph):
+        self.graph = graph
 
-    while queue:
-        node = queue.popleft()
-        print(node, end=" ")
+    def traverse(self, start):
+        visited = set()
+        queue = deque([start])
+        visited.add(start)
+        traversal_order = []
 
-        for neighbor in graph[node]:
-            if neighbor not in visited:
-                visited.add(neighbor)
-                queue.append(neighbor)
+        while queue:
+            node = queue.popleft()
+            traversal_order.append(node)
 
-# Example graph (adjacency list)
+            for neighbor in self.graph.get(node, []):
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append(neighbor)
+
+        return traversal_order
+
+# Example graph
 graph = {
     'A': ['B', 'C'],
     'B': ['D', 'E'],
@@ -24,6 +31,8 @@ graph = {
     'F': []
 }
 
-# Run BFS
+bfs_instance = BFS(graph)
+result = bfs_instance.traverse('A')
+
 print("Breadth-First Search traversal:")
-bfs(graph, 'A')
+print(" ".join(result))
