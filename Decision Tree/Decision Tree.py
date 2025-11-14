@@ -3,16 +3,9 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.tree import DecisionTreeClassifier, export_text
 
 # ---------------------------------------
-# 1. DATASET INSIDE THE CODE
+# 1. LOAD DATASET FROM CSV
 # ---------------------------------------
-data = {
-    "a1": ["True","True","False","False","False","True","True","True","False","False"],
-    "a2": ["Hot","Hot","Hot","Cool","Cool","Cool","Hot","Hot","Cool","Cool"],
-    "a3": ["High","High","High","Normal","Normal","High","High","Normal","Normal","High"],
-    "Class": ["No","No","Yes","Yes","Yes","No","No","Yes","Yes","Yes"]
-}
-
-df = pd.DataFrame(data)
+df = pd.read_csv('dataset.csv')  # Make sure the file has columns: a1, a2, a3, Class
 
 # ---------------------------------------
 # 2. CONVERT STRING LABELS TO NUMBERS
