@@ -1,14 +1,24 @@
-def dfs(graph, start, visited=None):
-    if visited is None:
+class DFS:
+    def __init__(self, graph):
+        self.graph = graph
+
+    def traverse(self, start):
         visited = set()
-    visited.add(start)
-    print(start, end=" ")
+        stack = [start]
+        traversal_order = []
 
-    for neighbor in graph[start]:
-        if neighbor not in visited:
-            dfs(graph, neighbor, visited)
+        while stack:
+            node = stack.pop()
+            if node not in visited:
+                visited.add(node)
+                traversal_order.append(node)
+                # Add neighbors in reverse order to visit in original order
+                for neighbor in reversed(self.graph.get(node, [])):
+                    if neighbor not in visited:
+                        stack.append(neighbor)
+        return traversal_order
 
-# Example graph (adjacency list)
+# Example graph
 graph = {
     'A': ['B', 'C'],
     'B': ['D', 'E'],
@@ -18,6 +28,8 @@ graph = {
     'F': []
 }
 
-# Run DFS
+dfs_instance = DFS(graph)
+result = dfs_instance.traverse('A')
+
 print("Depth-First Search traversal:")
-dfs(graph, 'A')
+print(" ".join(result))
