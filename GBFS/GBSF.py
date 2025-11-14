@@ -1,28 +1,40 @@
-from queue import PriorityQueue
+import heapq
 
-def greedy_best_first_search(graph, start, goal, heuristic):
-    visited = set()
-    pq = PriorityQueue()
-    pq.put((heuristic[start], start))
-    path = []
+class GreedyBFS:
+    def __init__(self, graph, heuristic):
+        self.graph = graph
+        self.heuristic = heuristic
 
-    while not pq.empty():
-        _, current = pq.get()
-        path.append(current)
-        visited.add(current)
+    def search(self, start, goal):
+        visited = set()
+        heap = []
+        heapq.heappush(heap, (self.heuristic[start], start))
+        parent = {start: None}
 
-        if current == goal:
-            print("Goal found!")
-            return path
+        while heap:
+            _, current = heapq.heappop(heap)
+            visited.add(current)
 
-        for neighbor in graph[current]:
-            if neighbor not in visited:
-                pq.put((heuristic[neighbor], neighbor))
+            if current == goal:
+                print("Goal found!")
+                return self._reconstruct_path(parent, goal)
 
-    return None
+            for neighbor in self.graph.get(current, []):
+                if neighbor not in visited and neighbor not in parent:
+                    heapq.heappush(heap, (self.heuristic[neighbor], neighbor))
+                    parent[neighbor] = current
 
+        return None
 
-# Example graph (Adjacency List)
+    def _reconstruct_path(self, parent, goal):
+        path = []
+        while goal is not None:
+            path.append(goal)
+            goal = parent[goal]
+        path.reverse()
+        return path
+
+# Example usage
 graph = {
     'A': ['B', 'C'],
     'B': ['D', 'E'],
@@ -32,7 +44,6 @@ graph = {
     'F': []
 }
 
-# Heuristic values (estimated distance to goal)
 heuristic = {
     'A': 5,
     'B': 4,
@@ -45,7 +56,8 @@ heuristic = {
 start = 'A'
 goal = 'F'
 
-result = greedy_best_first_search(graph, start, goal, heuristic)
+gbfs = GreedyBFS(graph, heuristic)
+result = gbfs.search(start, goal)
 
 if result:
     print("Path found:", " → ".join(result))
